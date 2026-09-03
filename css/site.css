@@ -304,6 +304,10 @@ a { color: inherit; }
   border: 1px solid rgba(38, 49, 30, 0.2);
   box-shadow: 0 30px 70px rgba(4, 14, 10, 0.45), inset 0 1px 0 rgba(255,255,255,0.35);
 }
+
+/* P3 audit : noms de rues netteté (ne débordent plus de leur bande) */
+.rv-plan__carte .rv-rue { font-size: 15px !important; letter-spacing: 0.02em; }
+
 .rv-plan__carte svg { display: block; width: 100%; height: auto; }
 .rv-plan__legende {
   display: flex; flex-wrap: wrap; gap: 0.5rem 1.6rem; justify-content: center;

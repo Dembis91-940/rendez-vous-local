@@ -81,8 +81,19 @@
     var enCours = null;
     var demande = false;
 
+    var pied = document.querySelector('.rv-pied, footer');
+
     function maj() {
       demande = false;
+      // P1 audit : le folio ne doit pas chevaucher le contenu légal
+      if (pied) {
+        var rPied = pied.getBoundingClientRect();
+        if (rPied.top < window.innerHeight * 0.88) {
+          folio.style.opacity = '0';
+          enCours = null;
+          return;
+        }
+      }
       var y = window.scrollY + window.innerHeight * 0.45;
       var courant = null;
       for (var i = 0; i < chapitres.length; i++) {
