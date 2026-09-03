@@ -55,16 +55,32 @@
     } else {
       // Boucle légère : elle lit la variable publiée par l'engine et ne fait
       // rien d'autre. Pas d'écouteur scroll, pas d'IntersectionObserver.
+      // Perf 04/09 : la boucle ne tourne QUE quand le plan est visible
+      // (avant, elle peignait du style SVG 60×/s sur tout le parcours,
+      // même quand la section pin était hors écran → CPU + repaints inutiles).
       var animationId = null;
+      var planVisible = false;
       function cadre() {
+        if (!planVisible) return;
         animationId = requestAnimationFrame(cadre);
         var brut = parseFloat(actePlan.style.getPropertyValue('--sc-p'));
         if (!isNaN(brut)) peindre(brut);
       }
-      cadre();
+      function demarrer() { if (!planVisible) { planVisible = true; animationId = requestAnimationFrame(cadre); } }
+      function arreter() { planVisible = false; if (animationId) { cancelAnimationFrame(animationId); animationId = null; } }
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entrees) {
+          entrees.forEach(function (e) {
+            if (e.isIntersecting) demarrer(); else arreter();
+          });
+        }, { rootMargin: '200px 0px' });
+        io.observe(actePlan);
+      } else {
+        demarrer();
+      }
       // Test : permet à la vérification de forcer un rendu hors rAF.
       window.__rvlTrace = function (p) { peindre(p); return true; };
-      window.__rvlTraceReset = function () { cancelAnimationFrame(animationId); animationId = requestAnimationFrame(cadre); };
+      window.__rvlTraceReset = function () { arreter(); demarrer(); return true; };
     }
   }
 
