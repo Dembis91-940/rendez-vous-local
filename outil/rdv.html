@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prendre rendez-vous — Rendez-Vous Local</title>
+<meta name="description" content="Réservation de rendez-vous 100 % locale. Vos données ne quittent pas l'ordinateur du praticien.">
+<style>
+/* ============ Rendez-Vous Local — page publique de réservation ============
+   Identité : le plan de quartier. Papier, encre forêt, terracotta.
+   Zéro dépendance externe : fonctionne même hors-ligne (fichier local). */
+:root{
+  --papier:#F4ECDD; --papier2:#EBE0C9; --encre:#26311E;
+  --foret:#15352A; --foret2:#1D4536; --argile:#BF4A1F; --route:#D97B2E;
+  --ambre:#F0B35E; --blanc:#FBF6EA; --ok:#2E7D5B; --err:#B3372E;
+  --ligne:rgba(38,49,30,.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--papier);color:var(--encre);line-height:1.55;min-height:100vh}
+.hd{background:var(--foret);color:var(--blanc);padding:26px 20px 22px;position:relative;overflow:hidden}
+.hd::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--route)}
+.hd .marque{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.02em}
+.hd .marque .point{width:14px;height:14px;border-radius:50%;background:var(--route);box-shadow:0 0 0 5px rgba(217,123,46,.25)}
+.hd h1{font-size:clamp(22px,4.5vw,34px);font-weight:800;margin-top:14px;line-height:1.12;letter-spacing:-.01em}
+.hd .sous{margin-top:8px;font-size:14px;opacity:.85;max-width:52ch}
+.hd .local{margin-top:12px;display:inline-flex;align-items:center;gap:8px;background:rgba(217,123,46,.16);border:1px solid rgba(217,123,46,.45);color:var(--ambre);padding:5px 12px;border-radius:99px;font-size:12px;font-weight:600}
+.wrap{max-width:980px;margin:0 auto;padding:26px 18px 60px}
+.carte{background:var(--blanc);border:1px solid var(--ligne);border-radius:18px;padding:22px 18px;box-shadow:0 12px 30px rgba(38,49,30,.08)}
+.carte h2{font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}
+.etapes{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.etape{font-size:12px;font-weight:700;color:var(--foret2);background:var(--papier2);border:1px solid var(--ligne);padding:4px 10px;border-radius:99px}
+.etape.act{background:var(--foret);color:var(--blanc);border-color:var(--foret)}
+.grid{display:grid;grid-template-columns:1fr;gap:22px;margin-top:18px}
+@media(min-width:760px){.grid{grid-template-columns:1.15fr .85fr}}
+.bloc h3{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;color:var(--foret2)}
+.bloc h3:first-child{margin-top:0}
+select,input,textarea{width:100%;font:inherit;color:var(--encre);background:#fff;border:1.5px solid var(--ligne);border-radius:10px;padding:10px 12px;margin:4px 0 10px}
+select:focus,input:focus,textarea:focus{outline:2px solid var(--route);outline-offset:1px;border-color:var(--route)}
+label{font-size:13px;font-weight:600}
+.jours{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;margin:8px 0 4px}
+.jour{border:1.5px solid var(--ligne);border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;background:#fff;font-size:12.5px;transition:border-color .15s,background .15s}
+.jour b{display:block;font-size:13px}
+.jour:hover{border-color:var(--route)}
+.jour.choisi{background:var(--foret);color:var(--blanc);border-color:var(--foret)}
+.creneaux{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.creneau{border:1.5px solid var(--ligne);background:#fff;border-radius:9px;padding:7px 12px;font-size:13.5px;font-weight:600;cursor:pointer}
+.creneau:hover{border-color:var(--route)}
+.creneau.choisi{background:var(--argile);border-color:var(--argile);color:#fff}
+.creneau:disabled{opacity:.38;cursor:not-allowed;text-decoration:line-through}
+.msg{font-size:13.5px;padding:10px 12px;border-radius:10px;margin:8px 0;display:none}
+.msg.ok{display:block;background:rgba(46,125,91,.12);border:1px solid rgba(46,125,91,.4);color:var(--ok)}
+.msg.err{display:block;background:rgba(179,55,46,.1);border:1px solid rgba(179,55,46,.4);color:var(--err)}
+.msg.info{display:block;background:rgba(21,53,42,.08);border:1px solid var(--ligne)}
+.btn{display:inline-block;background:var(--argile);color:#fff;border:none;border-radius:10px;font:inherit;font-weight:800;padding:12px 20px;cursor:pointer;width:100%;font-size:15px;transition:background .15s,transform .1s}
+.btn:hover{background:#a33d18}
+.btn:active{transform:scale(.985)}
+.btn:disabled{background:#c9b7a6;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--foret2);border:1.5px solid var(--foret2)}
+.btn.ghost:hover{background:rgba(21,53,42,.07)}
+.fin{align-items:center;gap:10px;margin-top:16px}
+.fin h2{color:var(--ok)}
+.vocal-box{background:var(--foret);border-radius:16px;color:var(--blanc);padding:18px;position:relative;overflow:hidden}
+.vocal-box::before{content:'';position:absolute;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(240,179,94,.28),transparent 70%);top:-40px;right:-30px}
+.vocal-box h3{color:var(--ambre)}
+.vocal-box p{font-size:13px;opacity:.9;margin:6px 0}
+.vocal-cta{display:inline-flex;align-items:center;gap:10px;background:var(--argile);color:#fff;border:none;border-radius:99px;padding:11px 18px;font:inherit;font-weight:800;cursor:pointer;font-size:14px}
+.vocal-cta:hover{background:#a33d18}
+.vocal-note{font-size:11.5px;opacity:.75;margin-top:10px;line-height:1.5}
+.vocal-stat{font-size:13px;min-height:20px;margin-top:8px;color:var(--ambre)}
+.pied{margin-top:26px;text-align:center;font-size:12px;color:var(--encre);opacity:.75}
+.pied .local-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(46,125,91,.1);border:1px solid rgba(46,125,91,.35);color:var(--ok);padding:5px 12px;border-radius:99px;font-weight:700;font-size:11.5px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<header class="hd">
+  <div class="wrap" style="padding:0">
+    <div class="marque"><span class="point"></span> Rendez-Vous Local</div>
+    <h1 id="titre-pro">Prendre rendez-vous</h1>
+    <p class="sous" id="sous-pro">Choisissez un créneau, la confirmation s'affiche à l'écran. Aucune de vos données ne part sur un serveur.</p>
+    <span class="local">📍 Réservation locale : vos données restent chez le praticien</span>
+  </div>
+</header>
+<main class="wrap">
+  <div class="carte" id="carte-resa">
+    <h2>Réserver en quelques clics</h2>
+    <div class="etapes"><span class="etape act" id="et-1">1. Prestation</span><span class="etape" id="et-2">2. Jour</span><span class="etape" id="et-3">3. Horaire</span><span class="etape" id="et-4">4. Coordonnées</span></div>
+    <div class="msg err" id="msg-err"></div>
+    <div class="msg info" id="msg-info"></div>
+    <div class="grid">
+      <div class="bloc">
+        <h3>Votre prestation</h3>
+        <select id="service" aria-label="Prestation"></select>
+        <h3>Choisissez un jour</h3>
+        <div class="jours" id="jours"></div>
+        <h3>Créneaux disponibles</h3>
+        <div class="creneaux" id="creneaux"><p style="font-size:13px;opacity:.7" id="creneau-vide">Sélectionnez d'abord un jour.</p></div>
+      </div>
+      <div class="bloc">
+        <h3>Vos coordonnées</h3>
+        <form id="form-coord" novalidate>
+          <label for="nom">Nom complet *</label>
+          <input id="nom" name="nom" autocomplete="name" required>
+          <label for="email">Email *</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+          <label for="tel">Téléphone</label>
+          <input id="tel" name="tel" type="tel" autocomplete="tel">
+          <label for="note">Message (optionnel)</label>
+          <textarea id="note" rows="2"></textarea>
+          <button class="btn" type="submit" id="btn-resa">Confirmer le rendez-vous</button>
+        </form>
+        <p style="font-size:11.5px;opacity:.75;margin-top:8px">Case de confidentialité : ces informations restent sur l'ordinateur du praticien (aucun serveur tiers). En cliquant, vous acceptez que le praticien conserve ces données pour gérer son agenda.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="carte" style="margin-top:18px;display:none" id="carte-fin">
+    <h2>✅ Rendez-vous confirmé</h2>
+    <p id="recap-fin" style="margin:12px 0;font-size:15px"></p>
+    <div class="msg info" id="fin-note">Un récapitulatif est enregistré dans l'agenda local du praticien. Si vous avez réservé par téléphone ou à l'accueil, le créneau est déjà posé.</div>
+    <button class="btn ghost" onclick="location.reload()">Faire une autre réservation</button>
+  </div>
+
+  <!-- Bloc vocal : le widget 🎙️ (assistant Vapi). La voix passe par un tiers
+       vocal (Vapi), les données de RDV restent locales : mention honnête. -->
+  <div class="carte" style="margin-top:18px">
+    <div class="vocal-box">
+      <h3>🎙️ Réserver à la voix</h3>
+      <p id="vocal-intro">Vous préférez parler ? L'assistant vocal prend votre réservation : qui, quoi, quand. Il vérifie les créneaux, confirme et affiche le récapitulatif.</p>
+      <button class="vocal-cta" id="btn-vocal"><span id="vocal-ico">🎙️</span> Parler à l'assistant</button>
+      <div class="vocal-stat" id="vocal-stat" role="status"></div>
+      <div id="vocal-transcript" style="margin-top:10px;font-size:12.5px;opacity:.9;display:none"></div>
+      <p class="vocal-note">Mention honnête : la conversation vocale est traitée par Vapi (service vocal tiers). Vos rendez-vous et vos données d'agenda, eux, ne quittent pas l'ordinateur. La synchronisation automatique voix-agenda est une évolution documentée : pour l'instant l'assistant annonce la réservation et la journalise localement.</p>
+    </div>
+  </div>
+</main>
+<footer class="pied">
+  <span class="local-tag">🔒 100 % local — zéro cloud, zéro GAFAM pour vos RDV</span><br>
+  Outil Rendez-Vous Local · la confidentialité comme argument · <span id="annee"></span>
+</footer>
+<script src="rvl-core.js"></script>
+<script>
+/* ============ Rendez-Vous Local — logique page publique ============ */
+(function () {
+  'use strict';
+
+  /* Stockage : localStorage si dispo, sinon mémoire (mode fichier strict). */
+  var store = (function () {
+    try { var t = '__rvl_t'; localStorage.setItem(t, '1'); localStorage.removeItem(t); return localStorage; }
+    catch (e) { return RVL.memoire(); }
+  })();
+
+  function lireConfig() {
+    try { return JSON.parse(store.getItem('rvl_config') || 'null') || RVL.configParDefaut(); }
+    catch (e) { return RVL.configParDefaut(); }
+  }
+  function lireBookings() {
+    try { return JSON.parse(store.getItem('rvl_bookings') || '[]') || []; }
+    catch (e) { return []; }
+  }
+  function ecrireBookings(liste) { store.setItem('rvl_bookings', JSON.stringify(liste)); }
+
+  /* Mode démo : préremplit un cabinet exemple au premier passage */
+  var params = new URLSearchParams(location.search);
+  if (params.get('demo') === '1') {
+    var c = lireConfig();
+    if (!store.getItem('rvl_demo_seed')) {
+      c.nom = 'Cabinet Martin — Kinésithérapie';
+      c.profession = 'Masseur-kinésithérapeute';
+      c.ville = 'Lyon 6e';
+      c.emailContact = 'contact@cabinet-martin.fr';
+      c.horaires = {1:[{from:'08:30',to:'12:00'},{from:'14:00',to:'19:00'}],2:[{from:'08:30',to:'12:00'},{from:'14:00',to:'19:00'}],3:[{from:'08:30',to:'12:00'}],4:[{from:'08:30',to:'12:00'},{from:'14:00',to:'19:00'}],5:[{from:'08:30',to:'12:00'},{from:'14:00',to:'18:00'}],6:[],7:[]};
+      store.setItem('rvl_config', JSON.stringify(c));
+      store.setItem('rvl_demo_seed', '1');
+    }
+  }
+
+  var config = lireConfig();
+  var bookings = lireBookings();
+  var serviceId = null, dateChoisie = null, timeChoisi = null;
+
+  document.getElementById('annee').textContent = new Date().getFullYear();
+  if (config.nom && config.nom !== 'Votre activité') {
+    document.getElementById('titre-pro').textContent = 'Prendre rendez-vous';
+    document.getElementById('sous-pro').textContent = 'Avec ' + config.nom + (config.ville ? ', ' + config.ville : '') + '. Choisissez un créneau, la confirmation s\u2019affiche à l\u2019écran. Aucune de vos données ne part sur un serveur.';
+  }
+
+  var serviceSel = document.getElementById('service');
+  function chargerServices() {
+    serviceSel.innerHTML = '';
+    (config.services || []).forEach(function (s, i) {
+      var o = document.createElement('option');
+      o.value = s.id;
+      o.textContent = s.nom + (s.dureeMin ? ' (' + s.dureeMin + ' min)' : '') + (s.prix ? ' — ' + s.prix + ' €' : '');
+      serviceSel.appendChild(o);
+      if (i === 0) serviceSel.selectedIndex = 0;
+    });
+    serviceId = config.services && config.services[0] ? config.services[0].id : null;
+  }
+  chargerServices();
+
+  function dureeService(id) {
+    var s = (config.services || []).find(function (x) { return x.id === id; });
+    return s ? (s.dureeMin || config.dureeMin || 30) : (config.dureeMin || 30);
+  }
+
+  function nomJour(key) {
+    var j = RVL.parseDate(key).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+    return j.charAt(0).toUpperCase() + j.slice(1);
+  }
+
+  /* Affichage des jours ouverts */
+  var joursBox = document.getElementById('jours');
+  function chargerJours() {
+    joursBox.innerHTML = '';
+    var jours = RVL.prochainsJours(config, bookings, 10, dureeService(serviceId));
+    if (jours.length === 0) {
+      joursBox.innerHTML = '<p style="grid-column:1/-1;font-size:13px;opacity:.7">Aucun créneau ouvert sur la période. Revenez plus tard ou contactez le praticien.</p>';
+      return;
+    }
+    jours.forEach(function (key) {
+      var d = document.createElement('div');
+      d.className = 'jour';
+      var dt = RVL.parseDate(key);
+      d.innerHTML = '<b>' + dt.toLocaleDateString('fr-FR', { weekday: 'short' }) + '</b>' + dt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+      d.title = nomJour(key);
+      d.addEventListener('click', function () {
+        dateChoisie = key;
+        chargerCreneaux();
+        [].forEach.call(joursBox.children, function (x) { x.classList.remove('choisi'); });
+        d.classList.add('choisi');
+      });
+      joursBox.appendChild(d);
+    });
+  }
+
+  var creneauxBox = document.getElementById('creneaux');
+  function chargerCreneaux() {
+    creneauxBox.innerHTML = '';
+    if (!dateChoisie) { creneauxBox.innerHTML = '<p style="font-size:13px;opacity:.7">Sélectionnez d\u2019abord un jour.</p>'; return; }
+    var libres = RVL.creneauxLibres(config, bookings, dateChoisie, dureeService(serviceId));
+    timeChoisi = null;
+    if (libres.length === 0) {
+      creneauxBox.innerHTML = '<p style="font-size:13px;opacity:.7">Plus aucun créneau libre ce jour-là. Choisissez un autre jour.</p>';
+      return;
+    }
+    libres.forEach(function (hhmm) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'creneau';
+      b.textContent = hhmm;
+      b.addEventListener('click', function () {
+        timeChoisi = hhmm;
+        [].forEach.call(creneauxBox.children, function (x) { x.classList.remove('choisi'); });
+        b.classList.add('choisi');
+      });
+      creneauxBox.appendChild(b);
+    });
+  }
+
+  serviceSel.addEventListener('change', function () {
+    serviceId = serviceSel.value;
+    chargerJours(); chargerCreneaux();
+  });
+
+  /* Chargement initial : jours ouverts pour le premier service */
+  chargerJours();
+
+  /* Réservation */
+  var msgErr = document.getElementById('msg-err');
+  var msgInfo = document.getElementById('msg-info');
+  function etat(type, texte) {
+    msgErr.style.display = type === 'err' ? 'block' : 'none';
+    msgInfo.style.display = type === 'info' ? 'block' : 'none';
+    if (type === 'err') msgErr.textContent = texte;
+    if (type === 'info') msgInfo.textContent = texte;
+  }
+
+  document.getElementById('form-coord').addEventListener('submit', function (e) {
+    e.preventDefault();
+    etat('', '');
+    var nom = document.getElementById('nom').value.trim();
+    var email = document.getElementById('email').value.trim();
+    if (!nom || !email) { etat('err', 'Indiquez votre nom et votre email.'); return; }
+    if (!dateChoisie || !timeChoisi) { etat('err', 'Choisissez d\u2019abord un jour et un créneau.'); return; }
+
+    var r = RVL.reserver(config, bookings, {
+      date: dateChoisie, time: timeChoisi, serviceId: serviceId,
+      nom: nom, email: email,
+      tel: document.getElementById('tel').value.trim(),
+      note: document.getElementById('note').value.trim(),
+      source: 'web'
+    });
+
+    if (!r.ok) {
+      if (r.raison === 'pris') { etat('err', r.message); chargerJours(); chargerCreneaux(); }
+      else etat('err', r.message);
+      return;
+    }
+
+    bookings = bookings.concat([r.booking]);
+    ecrireBookings(bookings);
+
+    /* Récap + confirmation */
+    var serviceNom = config.services.find(function (x) { return x.id === serviceId; }).nom;
+    document.getElementById('carte-resa').style.display = 'none';
+    var fin = document.getElementById('carte-fin');
+    fin.style.display = 'block';
+    document.getElementById('recap-fin').innerHTML =
+      '<b>' + nom + '</b> · ' + serviceNom + '<br>' +
+      nomJour(dateChoisie) + ' à <b>' + timeChoisi + '</b><br>' +
+      'Code de réservation : <b>' + r.booking.code + '</b>';
+    var note = document.getElementById('fin-note');
+    note.textContent = 'Votre rendez-vous est enregistré dans l\u2019agenda local du praticien' +
+      (config.nom && config.nom !== 'Votre activité' ? ' (' + config.nom + ')' : '') +
+      '. Vérifiez votre boîte de réception pour la confirmation envoyée par le praticien.';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+<script>
+/* Branchement vocal — assistant Vapi dédié Rendez-Vous Local.
+   Clé publique (conçue pour être publique, SDK navigateur).
+   La VOIX passe par Vapi (tiers vocal) : mention honnête affichée.
+   Les données de RDV, elles, restent dans le stockage local. */
+window.VOICE_CONFIG = {
+  publicKey: '2a56853c-e9e2-49b1-aaab-3f42eaf3312f',
+  assistantId: 'ce134492-7870-405c-b434-e6547902b01f',
+  accent: '#BF4A1F',
+  bundleUrl: 'assets/vapi-bundle.js'
+};
+</script>
+<script src="assets/voice-widget.js"></script>
+
