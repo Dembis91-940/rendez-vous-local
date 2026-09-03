@@ -74,6 +74,25 @@
     onScroll();
   }
 
+  /* ---------- Lenis smooth scroll (premium) — optionnel si CDN dispo ---------- */
+  function initLenis() {
+    if (reduceMotion || typeof Lenis === 'undefined' || window.__lenisOk) return;
+    window.__lenisOk = true;
+    var lenis = new Lenis({ lerp: 0.09, smoothWheel: true, wheelMultiplier: 0.95 });
+    function raf(time) { lenis.raf(time * 1000); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    // Ancres douces
+    document.querySelectorAll('a[href^="#"]').forEach(function (lien) {
+      lien.addEventListener('click', function (e) {
+        var cible = document.querySelector(lien.getAttribute('href'));
+        if (!cible) return;
+        e.preventDefault();
+        lenis.scrollTo(cible, { offset: -60, duration: 1.2 });
+      });
+    });
+  }
+
+  initLenis();
   initReveals();
   initTrace();
   initNav();
