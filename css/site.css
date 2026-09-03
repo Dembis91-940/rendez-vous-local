@@ -1,165 +1,558 @@
-/* ============================================================
-   RENDEZ-VOUS LOCAL — landing (35e business)
-   Identité : « le plan de quartier » — papier carte, encre forêt,
-   terracotta route. Signature scroll : le tracé de la demande de RDV
-   qui ne sort jamais du quartier. Zéro copie d'un autre business.
-   ============================================================ */
-:root{
-  --papier:#F4ECDD; --papier2:#EBE0C9; --encre:#26311E;
-  --foret:#15352A; --foret2:#1D4536; --argile:#BF4A1F; --route:#D97B2E;
-  --ambre:#F0B35E; --blanc:#FBF6EA; --ok:#2E7D5B; --err:#B3372E;
-  --ligne:rgba(38,49,30,.16); --ligne-claire:rgba(251,246,234,.16);
-  --ease:cubic-bezier(.23,1,.32,1);
-  --font:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-  --max:1180px; --gout:24px;
+/* ============================================================================
+   RENDEZ-VOUS LOCAL — landing refonte ScrollCraft (2026-09-03)
+   ----------------------------------------------------------------------------
+   Ce fichier est la COUCHE IDENTITÉ posée PAR-DESSUS css/scrollcraft.css
+   (floor officiel, copie non modifiée de l'engine). On surcharge les tokens,
+   on écrit le markup maison. On ne restyle pas les sélecteurs mécaniques
+   (.sc-stage, [data-sc-cue], [data-sc-reveal]…).
+
+   Identité validée : « le plan de quartier ». Papier, forêt, terracotta,
+   tracé local. Grammaire : chaptered editorial.
+   ========================================================================== */
+
+/* ------------------------------------------------------------- tokens RVL -- */
+:root {
+  --sc-canvas:      #F4ECDD;   /* papier */
+  --sc-surface:     #EAE0C8;   /* papier 2 */
+  --sc-ink:         #26311E;   /* encre forêt sur papier */
+  --sc-ink-soft:    #5B664E;   /* encre adoucie, teintée (jamais gris plat) */
+  --sc-accent:      #BF4A1F;   /* terracotta */
+  --sc-accent-ink:  #FFFDF6;
+
+  --sc-font-display: "Archivo", system-ui, sans-serif;
+  --sc-font-text:    "Archivo", system-ui, sans-serif;
+  --sc-font-mono:    ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* rôles métier (la palette validée du business) */
+  --rv-papier:    #F4ECDD;
+  --rv-papier-2:  #EAE0C8;
+  --rv-encre:     #26311E;
+  --rv-foret:     #15352A;
+  --rv-foret-2:   #1D4536;
+  --rv-argile:    #BF4A1F;
+  --rv-argile-fonce: #A23B12;   /* terracotta textes petits (AA sur papier) */
+  --rv-route:     #D97B2E;
+  --rv-ambre:     #F0B35E;
+  --rv-blanc:     #FBF6EA;
+  --rv-err:       #B3372E;
+
+  --rv-ligne:     rgba(38, 49, 30, 0.16);
+  --rv-ligne-2:   rgba(38, 49, 30, 0.10);
+  --rv-ligne-claire: rgba(251, 246, 234, 0.16);
+
+  --rv-carte:     #EFE6D2;     /* fond des plans dessinés */
+  --rv-ilot:      #DCCFB2;
+  --rv-ilot-ligne:#C7B896;
+  --rv-ombre:     38 49 30;
+
+  --sc-shadow-color: 38 49 30;
+  --sc-gutter: clamp(1.25rem, 5vw, 2.75rem);
+  --sc-maxw: 78rem;
+
+  --sc-r-sm: 8px; --sc-r-md: 14px; --sc-r-lg: 22px; --sc-r-pill: 999px;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{font-family:var(--font);background:var(--papier);color:var(--encre);line-height:1.6;overflow-x:hidden}
-img,svg{max-width:100%;display:block}
-a{color:inherit}
-.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gout)}
-.section{padding:clamp(70px,10vh,120px) 0}
-.section--foret{background:var(--foret);color:var(--blanc)}
-.section--foret2{background:var(--foret2);color:var(--blanc)}
-.section--papier2{background:var(--papier2)}
-.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ligne);border-radius:99px;padding:6px 14px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--foret2);background:rgba(255,255,255,.5)}
-.badge .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(46,125,91,.2)}
-.section--foret .badge{border-color:var(--ligne-claire);color:var(--ambre);background:rgba(255,255,255,.04)}
-h1,h2,h3{line-height:1.06;letter-spacing:-.02em;font-weight:800;text-wrap:balance}
-.grand{font-size:clamp(2.5rem,7vw,4.9rem);line-height:.98}
-.titre-section{font-size:clamp(1.9rem,4.4vw,3.1rem);margin-top:16px}
-.lead{font-size:clamp(1.02rem,1.6vw,1.2rem);opacity:.85;max-width:60ch;margin-top:16px}
-.section--foret .lead,.section--foret2 .lead{color:#d8e2d4}
-.petit{font-size:.82rem;opacity:.7}
-.centre{text-align:center}
-.centre .lead{margin-left:auto;margin-right:auto}
-/* Boutons */
-.btn{display:inline-flex;align-items:center;gap:10px;background:var(--argile);color:#fff;border:none;border-radius:12px;font:inherit;font-weight:800;font-size:1rem;padding:15px 26px;cursor:pointer;text-decoration:none;transition:background .16s var(--ease),transform .12s var(--ease);box-shadow:0 2px 0 rgba(0,0,0,.12)}
-.btn:hover{background:#a33d18}
-.btn:active{transform:scale(.97)}
-.btn--clair{background:var(--blanc);color:var(--foret)}
-.btn--clair:hover{background:#fff}
-.btn--ghost{background:transparent;color:var(--blanc);border:1.5px solid var(--ligne-claire)}
-.btn--ghost:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.5)}
-.btn--foret{background:var(--foret2);color:var(--blanc)}
-.btn--foret:hover{background:#123528}
-/* Header */
-.nav{position:fixed;top:0;left:0;right:0;z-index:60;background:rgba(244,236,221,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--ligne)}
-.nav .in{display:flex;align-items:center;gap:18px;padding:13px var(--gout);max-width:var(--max);margin:0 auto}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.02rem;color:var(--foret);text-decoration:none}
-.logo .pin{width:13px;height:13px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--argile);box-shadow:0 0 0 4px rgba(191,74,31,.18)}
-.nav .liens{margin-left:auto;display:flex;gap:20px;align-items:center;font-size:.92rem;font-weight:600}
-.nav .liens a{text-decoration:none;color:var(--encre);opacity:.8;transition:opacity .15s}
-.nav .liens a:hover{opacity:1}
-.nav .cta{background:var(--foret);color:var(--blanc)!important;border-radius:99px;padding:9px 18px;font-weight:700;text-decoration:none;font-size:.9rem}
-.nav .liens a.cta:hover{color:var(--blanc);opacity:.92}
-@media(max-width:760px){.nav .liens a:not(.cta){display:none}}
-/* Hero */
-.hero{position:relative;min-height:100svh;display:flex;align-items:flex-start;padding:clamp(120px,16vh,160px) 0 clamp(60px,9vh,110px);overflow:hidden;background:var(--papier)}
-.hero .fond{position:absolute;inset:0;opacity:.5;pointer-events:none}
-.hero .in{position:relative;z-index:2;display:grid;grid-template-columns:1fr;gap:36px;align-items:center}
-@media(min-width:980px){.hero .in{grid-template-columns:1.05fr .95fr}}
-.hero h1 .encart{display:inline-block;background:var(--argile);color:#fff;padding:0 14px;border-radius:12px;transform:rotate(-1.2deg)}
-.hero .lead{margin-top:22px}
-.hero .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
-.hero .local-line{display:flex;gap:10px;align-items:center;margin-top:26px;font-size:.86rem;font-weight:600;color:var(--foret2)}
-.hero .local-line svg{flex:none}
-/* Carte hero (SVG) */
-.hero-carte{position:relative;border-radius:22px;overflow:hidden;box-shadow:0 30px 70px rgba(38,49,30,.22);border:1px solid var(--ligne)}
-.hero-carte .legende{position:absolute;top:14px;left:14px;background:rgba(251,246,234,.92);backdrop-filter:blur(4px);border-radius:10px;padding:8px 12px;font-size:.74rem;font-weight:700;border:1px solid var(--ligne);display:flex;align-items:center;gap:8px}
-.hero-carte .cab{position:absolute;right:16px;bottom:16px;background:var(--foret);color:var(--blanc);border-radius:10px;padding:8px 12px;font-size:.76rem;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 8px 20px rgba(0,0,0,.2)}
-.hero-carte .cab .pulse{width:9px;height:9px;border-radius:50%;background:var(--route);animation:clignote 1.8s infinite}
-@keyframes clignote{50%{opacity:.35}}
-/* Bandeau confiance */
-.confiance{border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne);background:var(--papier2)}
-.confiance .in{display:flex;gap:28px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:20px var(--gout);max-width:var(--max);margin:0 auto}
-.confiance span{display:flex;gap:10px;align-items:center;font-size:.9rem;font-weight:700;color:var(--foret2)}
-.confiance svg{flex:none}
-/* Numérotation de rue : éléments signatures */
-.rue{display:flex;align-items:center;gap:14px;margin-bottom:34px}
-.rue .num{font-family:var(--mono);font-size:.78rem;color:var(--argile);border:1px solid rgba(191,74,31,.4);border-radius:8px;padding:4px 9px;background:rgba(191,74,31,.07)}
-.rue .trait{height:1px;flex:1;background:var(--ligne)}
-.section--foret .rue .trait{background:var(--ligne-claire)}
-/* Grille fonctions */
-.fonctions{display:grid;grid-template-columns:1fr;gap:14px;margin-top:40px}
-@media(min-width:640px){.fonctions{grid-template-columns:1fr 1fr}}
-@media(min-width:1020px){.fonctions{grid-template-columns:1fr 1fr 1fr;grid-auto-rows:1fr}}
-.fonction{background:var(--blanc);border:1px solid var(--ligne);border-radius:18px;padding:26px 24px;position:relative;overflow:hidden;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
-.fonction:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(38,49,30,.1)}
-.section--foret .fonction{background:rgba(255,255,255,.05);border-color:var(--ligne-claire)}
-.fonction .icone{font-size:1.5rem;width:52px;height:52px;border-radius:14px;background:rgba(191,74,31,.1);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
-.section--foret .fonction .icone{background:rgba(240,179,94,.12)}
-.fonction h3{font-size:1.2rem;margin-bottom:8px}
-.fonction p{font-size:.93rem;opacity:.8}
-/* Tracé signature : la scène du plan */
-.scene-map{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--ligne);background:#EFE6D2;box-shadow:0 24px 60px rgba(38,49,30,.18)}
-.scene-map svg{width:100%;height:auto;display:block}
-.scene-map .hud{position:absolute;top:14px;right:14px;background:rgba(21,53,42,.9);color:var(--blanc);border-radius:10px;padding:9px 13px;font-size:.75rem;font-weight:700;font-family:var(--mono);display:flex;gap:12px;align-items:center}
-.scene-map .hud b{color:var(--ambre)}
-.scene-map .loca{position:absolute;left:16px;bottom:16px;background:rgba(251,246,234,.93);border:1px solid var(--ligne);border-radius:10px;padding:9px 13px;font-size:.78rem;font-weight:700;display:flex;gap:8px;align-items:center;max-width:230px}
-/* Pricing */
-.prix-grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:44px}
-@media(min-width:760px){.prix-grid{grid-template-columns:1fr 1fr 1fr;align-items:stretch}}
-.prix{background:var(--blanc);color:var(--encre);border:1px solid var(--ligne);border-radius:20px;padding:30px 26px;display:flex;flex-direction:column;position:relative}
-.prix.vise{background:var(--foret);color:var(--blanc);border-color:var(--foret);transform:scale(1.02);box-shadow:0 24px 50px rgba(21,53,42,.35)}
-@media(max-width:759px){.prix.vise{transform:none}}
-.prix .etoile{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--route);color:#fff;border-radius:99px;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;white-space:nowrap}
-.prix h3{font-size:1.15rem}
-.prix .qui{font-size:.85rem;opacity:.7;margin-top:4px;min-height:2.2em}
-.prix .montant{font-size:2.4rem;font-weight:800;letter-spacing:-.03em;margin:16px 0 2px;display:flex;align-items:baseline;gap:8px}
-.prix .montant .barre{font-size:1rem;opacity:.5;text-decoration:line-through;font-weight:600}
-.prix .periode{font-size:.8rem;opacity:.7}
-.prix ul{list-style:none;margin:20px 0 26px;display:grid;gap:10px}
-.prix li{font-size:.9rem;display:flex;gap:10px;align-items:flex-start;padding-left:0}
-.prix li::before{content:'✓';color:var(--ok);font-weight:800;flex:none}
-.prix.vise li::before{color:var(--ambre)}
-.prix .btn{margin-top:auto;justify-content:center}
-/* FAQ */
-.faq{display:grid;gap:12px;max-width:820px;margin:36px auto 0}
-.faq details{background:var(--blanc);border:1px solid var(--ligne);border-radius:14px;padding:0 20px;overflow:hidden}
-.section--foret .faq details{background:rgba(255,255,255,.05);border-color:var(--ligne-claire)}
-.faq summary{cursor:pointer;list-style:none;padding:17px 26px 17px 0;font-weight:700;font-size:1rem;position:relative}
-.faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:'+';position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:1.4rem;color:var(--argile);font-weight:400}
-.faq details[open] summary::after{content:'–'}
-.faq .rep{padding:0 0 18px;font-size:.93rem;opacity:.85}
-/* Formulaire */
-.form-card{max-width:640px;margin:36px auto 0;background:var(--blanc);border:1px solid var(--ligne);border-radius:20px;padding:30px 26px}
-.form-card label{display:block;font-size:.86rem;font-weight:700;margin:14px 0 5px}
-.form-card input,.form-card textarea,.form-card select{width:100%;font:inherit;color:var(--encre);background:#fff;border:1.5px solid var(--ligne);border-radius:10px;padding:11px 13px}
-.form-card input:focus,.form-card textarea:focus{outline:2px solid var(--route);outline-offset:1px;border-color:var(--route)}
-.form-card .rgpd{display:flex;gap:10px;align-items:flex-start;font-size:.8rem;opacity:.85;margin:16px 0}
-.form-card .rgpd input{width:auto;margin-top:3px}
-.form-card .btn{width:100%;justify-content:center}
-.statut{font-size:.9rem;font-weight:600;padding:10px 14px;border-radius:10px;display:none;margin-top:14px}
-.statut[data-etat="ok"]{display:block;background:rgba(46,125,91,.12);border:1px solid rgba(46,125,91,.4);color:var(--ok)}
-.statut[data-etat="erreur"]{display:block;background:rgba(179,55,46,.1);border:1px solid rgba(179,55,46,.4);color:var(--err)}
-/* Démo */
-.demo-frame{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--ligne);box-shadow:0 26px 60px rgba(38,49,30,.2);background:#fff;margin-top:40px}
-.demo-frame .bar{display:flex;gap:8px;align-items:center;background:var(--foret);padding:12px 16px}
-.demo-frame .bar i{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.25);display:block}
-.demo-frame .bar i:nth-child(1){background:#e0857b}.demo-frame .bar i:nth-child(2){background:#e8c15a}.demo-frame .bar i:nth-child(3){background:#7fd0a8}
-.demo-frame .bar span{margin-left:12px;color:var(--blanc);font-size:.8rem;font-family:var(--mono);opacity:.85}
-.demo-frame iframe{width:100%;height:560px;border:0;display:block;background:var(--papier)}
-@media(max-width:760px){.demo-frame iframe{height:640px}}
-/* Pied */
-.pied{background:var(--foret);color:var(--blanc);padding:56px 0 30px}
-.pied .top{display:grid;gap:30px;grid-template-columns:1fr}
-@media(min-width:820px){.pied .top{grid-template-columns:2fr 1fr 1fr}}
-.pied h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ambre);margin-bottom:12px}
-.pied a{color:#cfdcc9;text-decoration:none;font-size:.9rem;display:block;margin:7px 0}
-.pied a:hover{color:#fff}
-.pied .legal{border-top:1px solid var(--ligne-claire);margin-top:36px;padding-top:22px;font-size:.78rem;opacity:.75;line-height:1.7}
-/* Révélation au scroll (cinematic léger) */
-[data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
-[data-reveal].vu{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  [data-reveal]{opacity:1;transform:none;transition:none}
-  .hero-carte .cab .pulse{animation:none}
+
+/* ------------------------------------------------------------- texte/typo -- */
+body {
+  background: var(--rv-papier);
+  color: var(--rv-encre);
+  font-weight: 400;
+  overflow-x: clip;
 }
-/* Focus visible */
-a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--route);outline-offset:2px;border-radius:6px}
-::selection{background:var(--route);color:#fff}
+h1, h2, h3, h4 { font-family: var(--sc-font-display); margin: 0; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--rv-route); outline-offset: 3px; }
+::selection { background: var(--rv-argile); color: #fff; }
+
+.rv-display--titre {
+  font-size: clamp(2.5rem, 7.2vw, 4.9rem);
+  line-height: 0.99;
+  font-weight: 800;
+  letter-spacing: -0.032em;
+}
+.rv-display--h2 {
+  font-size: clamp(1.75rem, 4.1vw, 2.95rem);
+  line-height: 1.04;
+  font-weight: 800;
+  letter-spacing: -0.024em;
+}
+.rv-display--h3 { font-size: 1.15rem; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em; }
+.rv-lead {
+  font-size: clamp(1.02rem, 1.5vw, 1.18rem);
+  line-height: 1.62;
+  color: var(--rv-encre);
+  max-width: 60ch;
+  margin: 1.1rem 0 0;
+}
+.rv-intro-sombre .rv-lead, .rv-chapitre--foret .rv-lead { color: var(--sc-ink-soft); }
+.rv-texte-mesure { max-width: 62ch; }
+
+.rv-num-mono {
+  font-family: var(--sc-font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------- conteneurs -- */
+.rv-conteneur { width: 100%; max-width: var(--sc-maxw); margin-inline: auto; padding-inline: var(--sc-gutter); }
+.rv-chapitre { padding-block: clamp(3.25rem, 8vw, 6.5rem); }
+
+/* Fonds de chapitres : coupes franches (pas de drift, grammaire éditoriale).
+   Restate color à chaque fois qu'on redéfinit les tokens d'encre. */
+.rv-chapitre--foret, .rv-fond-sombre {
+  background: var(--rv-foret);
+  color: var(--rv-blanc);
+  --sc-canvas: var(--rv-foret);
+  --sc-surface: var(--rv-foret-2);
+  --sc-ink: var(--rv-blanc);
+  --sc-ink-soft: #CBD6C4;
+  --sc-accent: var(--rv-ambre);
+  --sc-accent-ink: var(--rv-foret);
+  --rv-ligne: var(--rv-ligne-claire);
+}
+.rv-chapitre--papier2 { background: var(--rv-papier-2); }
+.rv-chapitre--foret2 { background: var(--rv-foret-2); color: var(--rv-blanc); }
+
+/* ================================================================== HERO ==
+   Page de titre éditoriale : la promesse sur papier, la médias commence au
+   chapitre 1. Pas de barre fixe (grammaire), pas de cue d'engine sur le titre. */
+.rv-hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(6rem, 12vh, 8.5rem) 0 clamp(3rem, 7vh, 5rem);
+  overflow: clip;
+}
+/* Fond « papier d'architecte » en parallaxe douce (device parallax engine). */
+.rv-hero__fond {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(46rem 46rem at 82% 18%, rgba(217, 123, 46, 0.07), transparent 62%),
+    repeating-linear-gradient(0deg,  rgba(38,49,30,0.055) 0 1px, transparent 1px 84px),
+    repeating-linear-gradient(90deg, rgba(38,49,30,0.055) 0 1px, transparent 1px 84px);
+  opacity: 0.9;
+}
+.rv-hero__fond::after {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    repeating-radial-gradient(circle at 88% 6%, transparent 0 148px, rgba(38,49,30,0.05) 148px 149px),
+    repeating-radial-gradient(circle at 88% 6%, transparent 0 218px, rgba(38,49,30,0.035) 218px 219px);
+}
+.rv-hero__in { position: relative; z-index: 2; }
+
+/* Masthead : marque + navigation dans le flux (pas de barre fixe). */
+.rv-masthead {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+}
+.rv-masthead__in {
+  display: flex; align-items: center; gap: 1rem;
+  max-width: var(--sc-maxw); margin-inline: auto;
+  padding: 1.15rem var(--sc-gutter);
+}
+.rv-marque {
+  display: inline-flex; align-items: center; gap: 0.62rem;
+  font-family: var(--sc-font-display);
+  font-weight: 800; font-size: 1rem; letter-spacing: -0.01em;
+  color: var(--rv-encre); text-decoration: none;
+}
+.rv-marque__pin {
+  width: 14px; height: 14px; border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--rv-argile);
+  box-shadow: 0 0 0 4px rgba(191, 74, 31, 0.16);
+}
+.rv-masthead__nav { margin-left: auto; display: flex; gap: clamp(0.9rem, 2vw, 1.5rem); align-items: center; }
+.rv-masthead__nav a {
+  font-size: 0.9rem; font-weight: 600; color: var(--rv-encre);
+  text-decoration: none; opacity: 0.78;
+  transition: opacity var(--sc-d-fast) var(--sc-ease-out);
+}
+.rv-masthead__nav a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 0.24em; }
+.rv-masthead__nav .rv-cta-nav {
+  opacity: 1; border: 1px solid var(--rv-encre); border-radius: var(--sc-r-pill);
+  padding: 0.5rem 1rem; color: var(--rv-encre); background: transparent;
+  transition: background var(--sc-d-fast) var(--sc-ease-out), color var(--sc-d-fast) var(--sc-ease-out);
+}
+.rv-masthead__nav .rv-cta-nav:hover { background: var(--rv-encre); color: var(--rv-papier); text-decoration: none; }
+
+.rv-display--titre { margin-top: 1.4rem; }
+@media (min-width: 700px) { .rv-display--titre { max-width: 22ch; } }
+.rv-encart {
+  display: inline-block;
+  background: var(--rv-argile); color: #fff;
+  padding: 0.02em 0.28em 0.08em;
+  border-radius: 0.22em;
+  transform: rotate(-1.6deg);
+  font-style: normal;
+}
+.rv-hero__lead { max-width: 52ch; margin-top: 1.5rem; font-size: clamp(1.05rem, 1.6vw, 1.24rem); line-height: 1.55; }
+.rv-hero__actes { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 2.1rem; }
+.rv-hero__local {
+  display: flex; gap: 0.55rem; align-items: center; margin-top: 1.6rem;
+  font-size: 0.88rem; font-weight: 600; color: var(--rv-foret-2);
+}
+.rv-hero__local svg { flex: none; }
+
+/* Entrée douce du titre (CSS uniquement, réduit si reduced-motion). */
+.rv-hero__in > * { animation: rv-entree 700ms var(--sc-ease-out) backwards; }
+.rv-hero__in > *:nth-child(2) { animation-delay: 90ms; }
+.rv-hero__in > *:nth-child(3) { animation-delay: 180ms; }
+.rv-hero__in > *:nth-child(4) { animation-delay: 260ms; }
+@keyframes rv-entree { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+/* -------------------------------------------------------------- boutons -- */
+.rv-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  background: var(--rv-argile); color: #FFFDF6;
+  border: 1px solid transparent; border-radius: var(--sc-r-md);
+  font-family: var(--sc-font-text); font-weight: 800; font-size: 0.98rem;
+  padding: 0.95rem 1.55rem; cursor: pointer; text-decoration: none;
+  box-shadow: 0 1px 0 rgba(38,49,30,0.18);
+  transition: transform 120ms var(--sc-ease-out), background var(--sc-d-fast) var(--sc-ease-out), color var(--sc-d-fast) var(--sc-ease-out), border-color var(--sc-d-fast) var(--sc-ease-out);
+}
+.rv-btn:hover { background: #A33D18; }
+.rv-btn:active { transform: scale(0.97); }
+.rv-btn--ligne {
+  background: transparent; color: var(--rv-encre);
+  border-color: var(--rv-ligne); box-shadow: none;
+}
+.rv-btn--ligne:hover { background: rgba(38,49,30,0.05); color: var(--rv-encre); }
+.rv-btn--blanc { background: var(--rv-blanc); color: var(--rv-foret); }
+.rv-btn--blanc:hover { background: #fff; }
+.rv-btn--surligne {
+  background: transparent; color: var(--rv-foret);
+  border-bottom: 2px solid var(--rv-route); border-radius: 0; box-shadow: none;
+  padding: 0.3rem 0.1rem;
+}
+.rv-btn--surligne:hover { background: transparent; color: var(--rv-argile-fonce); border-bottom-color: var(--rv-argile); }
+/* Au clavier / focus : le tour est visible (route). */
+
+/* ==================================================== CHAPITRE : constat == */
+.rv-constat__titre { max-width: 21ch; }
+@media (min-width: 900px) { .rv-constat__titre { max-width: none; } }
+.rv-constat {
+  margin-top: clamp(1.6rem, 4vw, 2.8rem);
+  border-top: 1px solid var(--rv-ligne);
+}
+.rv-constat__rang {
+  display: grid; grid-template-columns: 3.2rem 1fr;
+  gap: 1.2rem; padding: 1.45rem 0;
+  border-bottom: 1px solid var(--rv-ligne);
+  align-items: baseline;
+}
+.rv-constat__rang .rv-num-mono { color: var(--rv-argile-fonce); padding-top: 0.4rem; }
+.rv-constat__rang p { margin: 0; font-size: clamp(1rem, 1.35vw, 1.14rem); line-height: 1.55; }
+.rv-constat__rang b { font-weight: 800; }
+
+/* La bande des noms : les trois services du nuage, sans fausse icône de marque. */
+.rv-constat__nuages {
+  margin-top: 1.6rem;
+  display: flex; flex-wrap: wrap; gap: 0.7rem 1.4rem;
+  align-items: baseline;
+  font-family: var(--sc-font-display);
+  font-size: clamp(1.5rem, 3.4vw, 2.3rem);
+  font-weight: 800; letter-spacing: -0.02em;
+  color: var(--rv-encre);
+}
+.rv-constat__nuages span { display: inline-flex; align-items: center; gap: 0.55rem; }
+.rv-constat__nuages .rv-x {
+  color: var(--rv-err); font-weight: 700; font-size: 0.6em; font-family: var(--sc-font-text);
+}
+.rv-constat__note {
+  margin-top: 1rem; font-size: 0.92rem; color: var(--rv-argile-fonce); font-weight: 600;
+}
+
+/* ============================================ CHAPITRE FORÊT : retournement */
+.rv-retour__titre { max-width: 22ch; }
+.rv-retour__titre .rv-encart-route {
+  color: var(--rv-route);
+}
+@media (min-width: 900px) { .rv-retour__titre { max-width: 26ch; } }
+.rv-retour__lead { color: var(--rv-blanc); max-width: 64ch; }
+
+/* ===================================================== LE PLAN (PEAK) ===== */
+/* L'acte pincé : le plan du quartier qui se dessine. Stage = fond forêt. */
+.rv-plan-acte { }
+.rv-plan-acte[data-sc-stage], .rv-plan-acte.sc-stage {
+  background:
+    radial-gradient(60rem 40rem at 70% 10%, rgba(29,69,54,0.55), transparent 60%),
+    var(--rv-foret);
+}
+.rv-plan {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(0.8rem, 2vh, 1.4rem);
+  padding: clamp(4.5rem, 10vh, 6rem) var(--sc-gutter) clamp(2rem, 6vh, 3.5rem);
+}
+.rv-plan__tete {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  width: 100%; max-width: 58rem; margin: 0;
+  color: rgba(251, 246, 234, 0.62);
+}
+.rv-plan__carte {
+  position: relative;
+  width: min(94vw, 58rem);
+  border-radius: var(--sc-r-lg);
+  overflow: hidden;
+  background: var(--rv-carte);
+  border: 1px solid rgba(38, 49, 30, 0.2);
+  box-shadow: 0 30px 70px rgba(4, 14, 10, 0.45), inset 0 1px 0 rgba(255,255,255,0.35);
+}
+.rv-plan__carte svg { display: block; width: 100%; height: auto; }
+.rv-plan__legende {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.6rem; justify-content: center;
+  width: 100%; max-width: 58rem; margin: 0;
+  font-size: 0.8rem; font-weight: 600; color: rgba(251, 246, 234, 0.8);
+}
+@media (max-width: 700px) {
+  .rv-chapitre { padding-block: 3rem; }
+  .rv-demo__cadre iframe { height: 560px; }
+  .rv-fiche p { font-size: 0.92rem; }
+  .rv-masthead__nav a:not(.rv-cta-nav) { display: none; }
+  .rv-display--titre { font-size: clamp(2.15rem, 9.5vw, 2.9rem); }
+  /* Légendes du plan lisibles malgré l'échelle du viewBox */
+  .rv-plan__carte text { font-size: 24px !important; }
+  .rv-plan__carte g[font-size="18"] text { font-size: 21px !important; }
+  .rv-plan__carte text[fill="#6E7869"], .rv-plan__carte text[fill="#8E9889"] { font-size: 15px !important; }
+}
+/* Écrans courts : la carte du plan doit tenir dans le viewport du stage. */
+@media (max-height: 760px) {
+  .rv-plan__carte { width: min(88vw, 46rem); }
+  .rv-plan { padding-top: clamp(3.2rem, 8vh, 4.5rem); }
+}
+.rv-plan__legende b { font-family: var(--sc-font-mono); font-weight: 700; font-size: 0.74rem; letter-spacing: 0.04em; }
+.rv-plan__legende i { font-style: normal; }
+
+/* Le dessin des tracés. L'engine publie --sc-p sur l'acte ; le code de page
+   (js/main.js, signature) convertit cette progression en dasharray réel
+   (getTotalLength). Rouge (danger) : p 0 → 0.34, puis fantôme après 0.42.
+   Terracotta (local) : p 0.5 → 1. */
+.rv-trace-danger { stroke: var(--rv-err); stroke-width: 5; }
+.rv-trace-local { stroke: var(--rv-route); stroke-width: 5; }
+/* Iris : le croisement du nuage (reveal engine, acte pincé). Caché par défaut,
+   l'engine écrit clip-path par-dessus quand p entre dans la fenêtre. */
+.rv-nuage-bare { clip-path: circle(0% at 50% 50%); }
+
+/* ====================================================== OUTIL : fiches ==== */
+.rv-fiches {
+  margin-top: clamp(1.8rem, 4.5vw, 3rem);
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid var(--rv-ligne);
+  border-left: 1px solid var(--rv-ligne);
+}
+@media (min-width: 700px) { .rv-fiches { grid-template-columns: 1fr 1fr; } }
+.rv-fiche {
+  padding: clamp(1.4rem, 2.6vw, 2.1rem);
+  border-right: 1px solid var(--rv-ligne);
+  border-bottom: 1px solid var(--rv-ligne);
+  background: rgba(251, 246, 234, 0.5);
+}
+.rv-fiche__tete { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.rv-fiche__icone {
+  width: 44px; height: 44px; flex: none;
+  border-radius: 12px;
+  background: rgba(191, 74, 31, 0.1);
+  color: var(--rv-argile-fonce);
+  display: grid; place-items: center;
+}
+.rv-fiche__num { color: var(--rv-argile); opacity: 0.85; padding-top: 0.2rem; }
+.rv-fiche h3 { margin-top: 1.05rem; }
+.rv-fiche p { margin: 0.55rem 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--rv-encre); opacity: 0.85; max-width: 48ch; }
+
+/* ============================================================ DÉMO ======== */
+.rv-demo__actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem; }
+.rv-demo__cadre {
+  margin-top: clamp(1.6rem, 4vw, 2.6rem);
+  border-radius: var(--sc-r-lg); overflow: hidden;
+  border: 1px solid var(--rv-ligne);
+  box-shadow: 0 24px 60px rgba(38, 49, 30, 0.16);
+  background: var(--rv-blanc);
+}
+.rv-demo__bar {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: var(--rv-foret); color: var(--rv-blanc);
+  padding: 0.75rem 1.1rem;
+  font-family: var(--sc-font-mono); font-size: 0.74rem; letter-spacing: 0.02em;
+}
+.rv-demo__bar i { width: 10px; height: 10px; border-radius: 50%; background: rgba(251,246,234,0.22); }
+.rv-demo__bar i:nth-child(1) { background: #E0857B; }
+.rv-demo__bar i:nth-child(2) { background: #E8C15A; }
+.rv-demo__bar i:nth-child(3) { background: #7FD0A8; }
+.rv-demo__bar span { margin-left: 0.55rem; opacity: 0.85; }
+.rv-demo__cadre iframe { display: block; width: 100%; height: min(66vh, 560px); border: 0; background: var(--rv-papier); }
+@media (max-width: 700px) { .rv-demo__cadre iframe { height: 620px; } }
+
+/* ============================================================ PRIX ======== */
+.rv-prix__entete { max-width: 60ch; }
+.rv-prix__grille {
+  margin-top: clamp(2rem, 5vw, 3.2rem);
+  display: grid; gap: 1.1rem; grid-template-columns: 1fr;
+  align-items: stretch;
+}
+@media (min-width: 760px) {
+  .rv-prix__grille { grid-template-columns: 1fr 1.06fr 1fr; gap: 1rem; }
+}
+.rv-prix__fiche {
+  position: relative;
+  display: flex; flex-direction: column;
+  background: rgba(251, 246, 234, 0.05);
+  border: 1px solid var(--rv-ligne-claire);
+  border-radius: var(--sc-r-lg);
+  padding: clamp(1.6rem, 2.6vw, 2.2rem);
+}
+.rv-prix__fiche.rv-prix--mise {
+  background: var(--rv-blanc);
+  border-color: var(--rv-blanc);
+  color: var(--rv-encre);
+  box-shadow: 0 26px 60px rgba(4, 14, 10, 0.4);
+}
+.rv-prix__etiquette {
+  position: absolute; top: -0.8rem; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
+  background: var(--rv-route); color: #fff;
+  font-family: var(--sc-font-mono); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.42rem 0.9rem; border-radius: var(--sc-r-pill);
+}
+.rv-prix__qui { font-size: 0.88rem; opacity: 0.75; margin-top: 0.5rem; min-height: 2.4em; color: inherit; }
+.rv-prix--mise .rv-prix__qui { opacity: 0.68; }
+.rv-prix__montant {
+  margin-top: 1.2rem;
+  font-family: var(--sc-font-display);
+  font-size: clamp(2.1rem, 4vw, 2.6rem);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1;
+  display: flex; align-items: baseline; gap: 0.6rem;
+}
+.rv-prix__montant .rv-barre { font-size: 1rem; font-weight: 600; opacity: 0.5; text-decoration: line-through; }
+.rv-prix__periode { font-size: 0.8rem; opacity: 0.7; margin-top: 0.5rem; }
+.rv-prix__liste { list-style: none; margin: 1.4rem 0 1.8rem; padding: 0; display: grid; gap: 0.62rem; }
+.rv-prix__liste li { font-size: 0.9rem; line-height: 1.45; display: flex; gap: 0.6rem; align-items: flex-start; }
+.rv-prix__liste li::before { content: ""; flex: none; width: 0.62rem; height: 0.62rem; margin-top: 0.42em; border-radius: 50%; background: var(--rv-ok, #7FC9A5); }
+.rv-prix__fiche:not(.rv-prix--mise) .rv-prix__liste li::before { background: var(--rv-ambre); }
+.rv-prix__fiche .rv-btn { margin-top: auto; }
+.rv-prix__note { margin-top: 1.8rem; font-size: 0.84rem; color: rgba(251,246,234,0.72); max-width: 64ch; }
+
+/* ============================================================ FAQ ========= */
+.rv-faq__liste { margin-top: clamp(1.6rem, 4vw, 2.4rem); max-width: 52rem; border-top: 1px solid var(--rv-ligne); }
+.rv-faq details { border-bottom: 1px solid var(--rv-ligne); }
+.rv-faq summary {
+  cursor: pointer; list-style: none;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 1.4rem;
+  padding: 1.25rem 0.2rem;
+  font-family: var(--sc-font-display); font-weight: 700; font-size: 1.02rem; line-height: 1.35;
+}
+.rv-faq summary::-webkit-details-marker { display: none; }
+.rv-faq summary::after {
+  content: "+"; flex: none; font-size: 1.35rem; font-weight: 500;
+  color: var(--rv-argile); line-height: 1;
+  transition: transform 240ms var(--sc-ease-out);
+}
+.rv-faq details[open] summary::after { transform: rotate(45deg); }
+.rv-faq .rv-faq__rep { padding: 0 1.6rem 1.4rem 0.2rem; font-size: 0.95rem; line-height: 1.6; color: var(--rv-encre); opacity: 0.88; max-width: 62ch; }
+.rv-faq summary:focus-visible { border-radius: var(--sc-r-sm); }
+
+/* ================================================== COMMANDER (bulletin) == */
+.rv-commande__entete { text-align: center; max-width: 46rem; margin-inline: auto; }
+.rv-bulletin {
+  margin: clamp(1.8rem, 4.5vw, 2.8rem) auto 0;
+  max-width: 40rem;
+  background: var(--rv-blanc);
+  border: 1px solid var(--rv-ligne);
+  border-radius: var(--sc-r-lg);
+  box-shadow: 0 18px 50px rgba(38, 49, 30, 0.14);
+  padding: clamp(1.5rem, 3.4vw, 2.4rem);
+}
+.rv-bulletin__titre {
+  font-family: var(--sc-font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--rv-argile-fonce); margin-bottom: 1.1rem;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.rv-bulletin label { display: block; font-size: 0.86rem; font-weight: 700; margin: 1.1rem 0 0.35rem; }
+.rv-bulletin input[type="text"], .rv-bulletin input[type="email"], .rv-bulletin select, .rv-bulletin textarea {
+  width: 100%; font: inherit; color: var(--rv-encre); background: #fff;
+  border: 1.5px solid var(--rv-ligne); border-radius: var(--sc-r-sm);
+  padding: 0.72rem 0.8rem;
+}
+.rv-bulletin input:focus, .rv-bulletin select:focus, .rv-bulletin textarea:focus {
+  outline: 2px solid var(--rv-route); outline-offset: 1px; border-color: var(--rv-route);
+}
+.rv-bulletin .rv-rgpd { display: flex; gap: 0.65rem; align-items: flex-start; margin: 1.2rem 0; font-size: 0.8rem; line-height: 1.5; opacity: 0.9; }
+.rv-bulletin .rv-rgpd input { width: auto; margin-top: 0.22rem; accent-color: var(--rv-argile); }
+.rv-bulletin .rv-btn { width: 100%; }
+.rv-statut { font-size: 0.9rem; font-weight: 600; padding: 0.7rem 0.9rem; border-radius: var(--sc-r-sm); display: none; margin-top: 0.9rem; }
+.rv-statut[data-etat="ok"] { display: block; background: rgba(46, 125, 91, 0.12); border: 1px solid rgba(46, 125, 91, 0.4); color: #1F6A4A; }
+.rv-statut[data-etat="erreur"] { display: block; background: rgba(179, 55, 46, 0.1); border: 1px solid rgba(179, 55, 46, 0.4); color: var(--rv-err); }
+
+/* ======================================================== FOOTER / colophon */
+.rv-pied { background: var(--rv-foret); color: var(--rv-blanc); }
+.rv-pied__grille {
+  display: grid; gap: 2.4rem; grid-template-columns: 1fr;
+  padding-block: clamp(3rem, 6vw, 4.5rem) 2.2rem;
+}
+@media (min-width: 820px) { .rv-pied__grille { grid-template-columns: 2fr 1fr 1fr; } }
+.rv-pied .rv-marque { color: var(--rv-blanc); }
+.rv-pied .rv-marque__pin { background: var(--rv-route); }
+.rv-pied h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rv-ambre); margin-bottom: 0.9rem; font-family: var(--sc-font-mono); font-weight: 700; }
+.rv-pied a { color: rgba(251, 246, 234, 0.82); text-decoration: none; display: inline-block; margin: 0.3rem 0; font-size: 0.9rem; }
+.rv-pied a:hover { color: #fff; text-decoration: underline; text-underline-offset: 0.22em; }
+.rv-pied__texte { font-size: 0.9rem; line-height: 1.6; color: rgba(251, 246, 234, 0.8); margin-top: 1rem; max-width: 44ch; }
+.rv-pied__legal {
+  border-top: 1px solid var(--rv-ligne-claire);
+  padding: 1.4rem 0 2.2rem;
+  font-size: 0.78rem; line-height: 1.75;
+  color: rgba(251, 246, 234, 0.7);
+}
+.rv-pied__legal b { color: rgba(251, 246, 234, 0.92); }
+
+/* ================================================== FOLIO (chrome éditorial) */
+.rv-folio {
+  position: fixed; left: 1.1rem; bottom: 1.1rem; z-index: 70;
+  display: none;
+  align-items: center; gap: 0.7rem;
+  font-family: var(--sc-font-mono); font-size: 0.7rem; letter-spacing: 0.06em;
+  color: var(--rv-encre);
+  background: color-mix(in oklab, var(--rv-papier) 82%, transparent);
+  border: 1px solid var(--rv-ligne);
+  border-radius: var(--sc-r-pill);
+  padding: 0.45rem 0.9rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms var(--sc-ease-out);
+}
+.rv-folio b { color: var(--rv-argile-fonce); }
+@media (min-width: 1080px) { .rv-folio { display: inline-flex; } }
+
+/* ==================================================== utilitaires accessibles */
+.rv-eviter {
+  position: absolute; left: -9999px; top: auto; z-index: 100;
+  background: var(--rv-encre); color: var(--rv-papier);
+  padding: 0.7rem 1.1rem; border-radius: 0 0 var(--sc-r-sm) 0;
+}
+.rv-eviter:focus { left: 0; }
+
+/* ============================================== entrées au scroll (engine) == */
+/* Avant montage de l'engine, le contenu ne doit jamais rester masqué. */
+html:not(.sc-ready) [data-sc-in],
+html:not(.sc-ready) [data-sc-stagger] > * { opacity: 1; transform: none; }
+
+/* ========================================================= reduced motion === */
+@media (prefers-reduced-motion: reduce) {
+  .rv-hero__in > * { animation: none; }
+  .rv-trace-danger, .rv-trace-local { stroke-dashoffset: 0 !important; opacity: 1 !important; }
+  .rv-nuage-bare { clip-path: none !important; }
+  .rv-plan__carte svg { transition: none; }
+  /* En reduced-motion, le plan ne doit pas rester figé sur plusieurs écrans :
+     l'acte pincé redevient un bloc normal, la carte se lit en défilant. */
+  [data-sc-act="pin"] { height: auto !important; }
+  [data-sc-act="pin"] .rv-plan-acte { position: static !important; height: auto !important; overflow: visible; }
+  [data-sc-act="pin"] .rv-plan { position: static; height: auto; padding: 0.25rem 0 2.5rem; }
+}

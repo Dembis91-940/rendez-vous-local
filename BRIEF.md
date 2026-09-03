@@ -1,70 +1,145 @@
-# BRIEF — Rendez-Vous Local (35e business)
+# BRIEF — Rendez-Vous Local · refonte ScrollCraft (35e business)
 
-Fichier autoporté (mission autonome, pas d'interview possible).
-Date : 2026-09-03. Agent : business-builder. Demandeur : Poseidon.
+**Self-authored, not interviewed.** Mission autonome (nuit du 2026-09-03), demandeur Poseidon,
+exécutant business-builder. Le brief des 8 questions est rédigé dans la voix du business
+(« local, confiance, papier, quartier »), pas dans celle de l'agent.
 
-## Réponses aux 8 questions (autoportées, voix de la marque)
+## Réponses aux 8 questions de l'interview (voix du business)
 
-1. Vibe en 3-5 mots : « Le plan de quartier du rendez-vous. Papier, forêt, terracotta, tracé local. »
-   Références : une affiche d'échoppe française, un plan de ville ancien, le carnet papier d'un artisan.
-2. Parcours au scroll, section par section :
-   a) Hero — la promesse : « Vos rendez-vous ne quittent pas votre ordinateur. »
-   b) Tension — Calendly/Google : la réservation part chez un géant (nuage lointain).
-   c) Tournant — la carte du quartier : le tracé LOCAL (signature) qui ne sort pas du périmètre.
-   d) Substance — les fonctionnalités réelles (agenda, lien, refus de double résa, vue pro, rappels).
-   e) Démo — l'outil en vrai (iframe mode démo sur les Pages, données d'exemple).
-   f) Prix — 3 offres (39 € licence, 79 € + vocal, 490 € clé en main).
-   g) FAQ, formulaire EmailJS, footer RGPD + disclaimers honnêtes.
-3. Courbe d'énergie : hero posé → tension forte → tournant calme et précis (peak) → substance dense
-   → démo interactive → prix clairs → clôture.
-4. Sentiment par étape : reconnu (c'est mon quotidien de praticien) → inquiet (mes données chez Google ?)
-   → soulagé (ça reste au quartier) → confiant (c'est réel) → convaincu (je l'essaie) → décidé (je prends).
-   MOMENT À RETENIR : le tracé en pointillés qui fait le tour du quartier et rentre au cabinet, pendant
-   que le nuage Google reste hors-cadre.
-5. Une chose qu'aucun autre site ne fait : une carte de quartier dessinée où le scroll DESSINE le trajet
-   de la demande de RDV, et ce trajet ne franchit jamais la limite du quartier. Signature : « le tracé
-   qui reste chez soi ».
-6. Distance du premium-minimal : premium-artisanal (papier texturé, sérigraphie, dessin vectoriel soigné,
-   pas de glassmorphism, pas de 3D).
-7. Un seul monde continu ou scènes distinctes : scènes distinctes mais même univers « carte/quartier »
-   (comme des rues différentes du même plan).
-8. Assets disponibles : aucun asset photo/vidéo. Tout est dessiné (SVG/CSS) ou réel (l'outil en iframe).
-   Le bundle vocal Vapi existe (assets/vapi-bundle.js, 570 Ko).
+1. **Vibe, en 3 à 5 mots** : « Le plan de quartier du rendez-vous. Papier, forêt, terracotta,
+   tracé local. » Références : une affiche d'échoppe française, un plan de ville ancien,
+   le carnet papier d'un artisan. Pas de site « que j'aime » : c'est un objet papier.
+2. **Parcours au scroll, section par section** : (a) la page de titre, la promesse :
+   « Vos rendez-vous ne quittent pas votre ordinateur » ; (b) le constat : quand on réserve
+   sur Calendly, Google ou Doctolib, la demande fait l'aller-retour vers un serveur lointain,
+   et chaque réservation laisse une trace ; (c) le retournement, sur fond forêt : avec nous,
+   la demande fait le tour du pâté de maisons et rentre au cabinet ; (d) le plan du quartier
+   qui se dessine sous la main : d'abord le tracé rouge qui sort vers le nuage, puis le nuage
+   barré, puis le tour du pâté de maisons jusqu'au cabinet ; (e) l'outil en vrai, six capacités
+   concrètes ; (f) la démo réelle, la page de réservation qui fonctionne dans la page ;
+   (g) le prix, un achat pas un abonnement ; (h) la FAQ franche, puis le bulletin de commande ;
+   le colophon honnête (RGPD, note Vapi) tout en bas.
+3. **Courbe d'énergie** : posé (page de titre) → nommé, un peu froid (le constat) →
+   espoir (le retournement) → tension contenue (le tracé rouge sort) → silence d'un instant
+   (le nuage barré) → la révélation, calme et précise (le tour du pâté de maisons) →
+   dense mais serein (l'outil) → preuve vivante (la démo) → net (les prix) → apaisé (FAQ)
+   → décision (commander). Le pic n'est pas le plus bruyant : c'est le plus dessiné.
+4. **Sentiment par étape, et le moment à retenir** : reconnu (c'est mon quotidien de praticien)
+   → inquiet (mes données partent chez un géant) → soulagé (ça peut rester au quartier) →
+   tendu (je vois le tracé rouge sortir) → soufflé (le nuage est barré) → émerveillé
+   (le tour du pâté de maisons se dessine et rentre au cabinet) → confiant (c'est réel,
+   je vois les fonctions) → convaincu (je l'essaie dans la page) → clair (39, 79 ou 490,
+   une fois) → décidé (je commande). **LE moment à retenir** : le tracé rouge s'arrête net à
+   la limite, le nuage est barré, et le tracé terracotta fait le tour du pâté de maisons
+   pour rentrer au cabinet, dessiné par le scroll, sans jamais franchir la limite.
+5. **Une chose qu'aucun site ne fait** : montrer visuellement où partent VOS données quand
+   vous réservez ailleurs, sur un plan de quartier que le scroll dessine lui-même, avec une
+   limite que le tracé local ne franchit jamais. C'est la graine de la signature.
+6. **Distance du premium-minimal** : premium-artisanal, éditorial. Papier, sérigraphie,
+   dessin vectoriel soigné, folio de chapitre. Pas de glassmorphism, pas de 3D, pas de bento,
+   pas de grille de cartes identiques.
+7. **Un seul monde continu ou scènes distinctes** : scènes distinctes, chapitres d'un même
+   carnet (comme des rues différentes du même plan). Chaque chapitre a son propre fond ;
+   coupes franches, pas de fondu continu.
+8. **Assets déjà possédés** : aucun asset photo/vidéo. Tout est dessiné (SVG inline, déjà
+   le vocabulaire du plan : papier #EFE6D2, îlots #DCCFB2, rues blanches) ou réel (l'outil
+   en iframe : outil/agenda.html, outil/rdv.html, rvl-core.js, bundle vocal Vapi). Ces SVG
+   sont réencodés en actifs scrollcraft (pathLength + dashoffset pilotés par --sc-p).
 
-## Identité (décision)
+## Le parcours (journey beats)
 
-- Concept : « Le plan de quartier » — le RDV comme une course qui reste dans le quartier.
-- Palette (aucune dominante identique dans le portefeuille) :
-  - papier #F4ECDD (fond), papier-2 #EBE0C9 (surface)
-  - encre #26311E (texte sur papier)
-  - forêt #15352A (sections sombres), forêt-2 #1D4536 (surface sombre)
-  - terracotta #BF4A1F (CTA), route #D97B2E (tracés/épingles), ambre #F0B35E (accents sur sombre)
-- Typos : Archivo (display + corps, Google Fonts) sur la landing ; l'OUTIL = zéro CDN (system-ui + ui-monospace).
-- Signature scroll : SVG carte de quartier + tracé en pointillés dessiné au scroll (stroke-dashoffset),
-  qui boucle localement. Le nuage (Calendly) dessiné hors du quartier, barré.
-- Pas de : 3D WebGL, glassmorphism, bento, chatbot de la landing (l'agent vocal vit dans l'outil),
-  counters inventés, em-dash, « scroll to explore », section numbers.
+1. Reconnaissance : le praticien voit son propre matin, sa propre prise de rendez-vous.
+2. Tension : le coût réel, nommé sans détour (trace, data center, lois, fermeture de service).
+3. Retournement : la phrase qui change le récit (« le tour du pâté de maisons »).
+4. Preuve dessinée : le plan se construit, rouge puis barré puis local (la signature).
+5. Substance : pourquoi ça tient (six capacités réelles de l'outil).
+6. Preuve vivante : la vraie page de réservation dans la page (démo).
+7. Choix : trois prix nets, un achat unique.
+8. Engagement : FAQ franche puis bulletin de commande.
 
-## Produit (ce qui est VENDU, réel)
+## Feeling curve (écrite avant les actes)
 
-Dossier téléchargeable « rendez-vous-local-v1.zip » : agenda.html (vue pro locale) + rdv.html
-(page publique de réservation) + rvl-core.js (moteur pur) + assets vocaux Vapi. Fonctionne en
-localStorage local (fichier file:// ou hébergement au choix du praticien), export/import JSON.
-Démo en ligne publiée (Pages) avec données d'exemple.
-Vocal : assistant Vapi dédié « Rendez-Vous Local — Prise de RDV (démo) » id ce134492-7870-405c-b434-e6547902b01f.
-Honnêteté : la voix passe par Vapi (tiers vocal), les données RDV restent locales. Synchro
-planning-vocal complète = évolution documentée.
+1. Calme : la page de titre sur papier, la promesse en une phrase, rien ne bouge.
+2. Inquiétude : le constat nomme Calendly, Google Agenda, Doctolib ; chaque ligne est un fait.
+3. Espoir : fond forêt, la phrase du retournement, l'image du pâté de maisons.
+4. Tension : le tracé rouge se dessine, sort du plan vers le nuage gris.
+5. Bascule (le silence) : le nuage est barré en iris, le rouge s'efface en fantôme. Rien d'autre.
+6. Soulagement, le PEAK : le tracé terracotta fait le tour du pâté de maisons et rentre au cabinet.
+7. Confiance : l'outil en vrai, six capacités listées comme des fiches.
+8. Conviction : la démo réelle, on réserve dans la page.
+9. Clarté : les prix, un achat, vos données, pour toujours.
+10. Décision : FAQ franches, puis le bulletin de commande qui résout.
 
-## Offres (3, avec prix)
+**Le PEAK** : la phrase que le visiteur dirait à un ami — « j'ai fait défiler et j'ai vu le
+tracé de la réservation sortir du plan vers le nuage, s'arrêter net, le nuage barré, puis le
+tour du pâté de maisons se dessiner jusqu'au cabinet du praticien ». Il vit dans l'acte 6
+(le plan pincé), qui a le plus grand span de la page.
 
-1. Licence Solo — 39 € (barré 49 €, lancement) : outil complet 100 % local, 1 praticien, mises à jour 12 mois.
-2. Licence Pro — 79 € : tout Solo + agent vocal branché (assistant personnalisé aux horaires/services
-   du praticien, widget 🎙️, 100 min d'appel incluses puis usage Vapi réel ~0,15 €/min documenté).
-3. Clé en main Agentia — 490 € (barré 590 €) : installation chez le client, page publique hébergée à son
-   nom, agent vocal calibré, formation 1 h, support 30 jours.
+**Tell-someone** : « C'est le site où vous faites défiler et vous voyez la réservation de
+votre client voyager sur le plan du quartier : d'abord vers le nuage, et là le tracé
+s'arrête, le nuage est barré, et le tour du pâté de maisons se dessine jusqu'au cabinet. »
+
+**Silence authorisé** : dans l'acte pincé, entre le croisement du nuage (p ≈ 0,36–0,42) et
+le départ du tracé local (p ≈ 0,5), le plan reste presque vide à dessein : c'est la respiration
+avant le pic. La vérification ne doit pas le compter comme du dead scroll.
+
+## Grammaire et signature
+
+- **Grammaire : chaptered editorial.** La page est un carnet imprimé : page de titre, chapitres
+  à coupe franche, folio courant en marge, médias dans leur colonne avec légende, clôture en
+  colophon. Les autres grammaires ont perdu : filmic one-shot (pas d'assets vidéo, argument
+  linéaire mais pas de « film » à pousser, et l'effet « déjà vu » des builds précédents) ;
+  live surface (l'outil vit dans une page séparée, la landing vend un objet papier) ;
+  continuous world (pas de géographie à survoler d'un seul tenant, le plan EST une figure,
+  pas le monde entier) ; typographic poster (la preuve visuelle du plan est essentielle) ;
+  gallery/catalog (le visitor n'explore pas une collection, il suit un argument) ;
+  split stage (l'argument nuage/local n'occupe que deux chapitres, pas toute la page) ;
+  rhythmic cutlist (l'énergie du business est calme et rassurante, pas pulsée).
+- **Signature move : le tracé qui se dessine sous la main, en deux candidats.** Deux chemins
+  SVG sur le plan du quartier. L'engine pincé publie `--sc-p` ; le code de page (js/main.js,
+  signature, engine intact) convertit cette progression en `stroke-dasharray` réel
+  (`getTotalLength`) : le rouge (danger) sort vers le nuage de p 0 → 0,34 puis s'efface en
+  fantôme ; le terracotta (local) fait le tour du pâté de maisons de p 0,5 → 1. Le croisement
+  du nuage est un iris (reveal engine) à 0,36–0,42. Aucun scroll maison : tout est piloté par
+  la variable de progression de l'engine.
+
+## Score table (device par beat)
+
+| Beat | Acte | Device | Pourquoi celui-ci |
+|---|---|---|---|
+| Reconnaissance | page de titre | flow + parallax léger du papier quadrillé | pas d'assets vidéo : le calme du titre, la profondeur vient du fond |
+| Tension | constat | flow + in | chapitre dense, lignes de faits, rythme documentaire |
+| Retournement | chapitre forêt (titre) | flow + in | coupe franche sur fond sombre, la phrase porte tout |
+| Preuve dessinée (PEAK) | plan pincé | pin + reveal (iris) + signature dash | le plan tient l'écran et se dessine sous la main |
+| Substance | outil | flow + in (stagger 50) | fiches numérotées, pas de cartes identiques |
+| Preuve vivante | démo | flow + in | l'iframe réelle est la preuve |
+| Choix | prix | flow + in | l'information, compressée, honnête |
+| Engagement | FAQ + commande | flow + in | l'accordéon puis le bulletin |
+
+Familles : pin, flow+in, reveal, parallax (4, jamais deux fois de suite). Deux actes maximum
+de scrub : zéro. Total visé 8–14 viewport-heights.
+
+## Identité (inchangée, validée)
+
+Palette : papier #F4ECDD, papier-2 #EAE0C8, encre #26311E, forêt #15352A, forêt-2 #1D4536,
+terracotta #BF4A1F, route #D97B2E, ambre #F0B35E, blanc #FBF6EA, erreur #B3372E.
+Typo : Archivo (Google Fonts) display + corps ; folio et étiquettes en mono système.
+H1 inchangé : « Vos rendez-vous ne quittent pas votre ordinateur. » (avec le mot « pas »
+dans son encart terracotta).
+Contenu conservé : 8 sections (accueil, local, trace, outil, demo, prix, faq, commander),
+3 offres (Solo 39 € / 49 € barré, Pro + vocal 79 € / 99 € barré, Clé en main 490 € / 590 € barré),
+formulaire EmailJS (js/emailjs-config.js + js/prix.js + js/lead.js + SDK @emailjs/browser),
+mentions honnêtes footer (RGPD + note Vapi). L'outil (outil/) n'est pas touché.
+
+## Produit vendu (rappel, réel)
+
+Dossier « rendez-vous-local-v1.zip » : agenda.html (vue pro locale) + rdv.html (page publique)
++ rvl-core.js (moteur pur) + assets vocaux Vapi. localStorage local, export/import JSON.
+La voix passe par Vapi (tiers vocal), les données de RDV restent locales : c'est dit.
 
 ## Preuves à produire
 
-node --check (tous JS), tests unitaires Node du moteur (réservation créée, refus de double, vue pro
-du jour, indisponibilités), test navigateur réel (réserver sur rdv.html → visible dans agenda.html →
-créneau pris refusé), HTTP 200 sur Pages, orthographe française, contrastes WCAG ≥ 4.5:1 calculés.
+BRIEF.md autoporté, engine officiel copié sans modification, node --check JS, test navigateur
+réel (serveur local + Chrome) : scroll aux positions clés, dashoffset des tracés, absence de
+dead scroll, contrastes, mobile 390 ; puis git commit/push + HTTP 200 sur Pages. Rapport dans
+~/.hermes/agents/business-builder/reports/2026-09-03-refonte-scrollcraft-rvl.md.

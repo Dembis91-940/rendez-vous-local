@@ -1,99 +1,128 @@
 /* ============================================================
-   RENDEZ-VOUS LOCAL — motion landing
-   Signature scrollcraft : le tracé de la demande de RDV se dessine
-   au fil du défilement (stroke-dashoffset) et reste DANS le quartier.
-   Reveal doux au scroll (IntersectionObserver) — zéro librairie.
+   RENDEZ-VOUS LOCAL — landing (refonte ScrollCraft 2026-09-03)
+   -----------------------------------------------------------------
+   Ce fichier ne contient AUCUN scroll fait maison : le défilement
+   est conduit par js/scrollcraft.js (engine officiel), qui publie
+   --sc-p sur chaque acte. Ici, uniquement :
+   1. La SIGNATURE du site : lecture de --sc-p sur l'acte pincé
+      (le plan) et écriture du dasharray réel des deux tracés SVG.
+      L'engine n'est pas touché : il pilote, le plan dessine.
+   2. Le folio éditorial (chrome de la grammaire chaptered) : la
+      « rue » courante, mise à jour au scroll.
+   3. La pré-sélection d'offre : les boutons de prix remplissent le
+      select du bulletin de commande puis amènent au formulaire.
    ============================================================ */
 (function () {
   'use strict';
 
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var clamp01 = function (x) { return x < 0 ? 0 : x > 1 ? 1 : x; };
 
-  /* ---------- Reveal au scroll ---------- */
-  function initReveals() {
-    var items = document.querySelectorAll('[data-reveal]');
-    if (reduceMotion || !('IntersectionObserver' in window)) {
-      items.forEach(function (el) { el.classList.add('vu'); });
-      return;
+  /* ---------- 1. SIGNATURE : le plan qui se dessine sous la main ---------- */
+  var actePlan = document.querySelector('[data-sc-act="pin"]');
+  var traceDanger = document.getElementById('rv-trace-danger');
+  var traceLocal = document.getElementById('rv-trace-local');
+
+  if (actePlan && traceDanger && traceLocal && typeof traceDanger.getTotalLength === 'function') {
+    // Longueurs réelles des chemins (user units). Le dasharray « f + reste »
+    // fait pousser le trait depuis son départ, sans offset fragile.
+    var LONG_DANGER = traceDanger.getTotalLength();
+    var LONG_LOCAL = traceLocal.getTotalLength();
+    var DANGER_FIN = 0.34;    // le rouge a fini de sortir du quartier
+    var DANGER_FANTOME = 0.5; // à p = 0,5 il a disparu (le local démarre)
+    var LOCAL_DEBUT = 0.5;    // le tour du pâté de maisons
+
+    function peindre(p) {
+      var ph = clamp01(p / DANGER_FIN);
+      var fd = LONG_DANGER * ph;
+      traceDanger.style.strokeDasharray = fd.toFixed(2) + ' ' + LONG_DANGER.toFixed(2);
+      var opacite = p <= DANGER_FIN ? 1 : Math.max(0, 1 - (p - DANGER_FIN) / (DANGER_FANTOME - DANGER_FIN));
+      traceDanger.style.opacity = opacite.toFixed(3);
+
+      var pl = clamp01((p - LOCAL_DEBUT) / (1 - LOCAL_DEBUT));
+      var fl = LONG_LOCAL * pl;
+      traceLocal.style.strokeDasharray = fl.toFixed(2) + ' ' + LONG_LOCAL.toFixed(2);
     }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add('vu'); io.unobserve(en.target); }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    items.forEach(function (el) { io.observe(el); });
-  }
 
-  /* ---------- Signature : tracé local dessiné au scroll ---------- */
-  function initTrace() {
-    var chemin = document.getElementById('chemin-client');
-    var hud = document.getElementById('hud-pct');
-    if (!chemin) return;
-    var LONGUEUR = chemin.getTotalLength();
-    chemin.style.strokeDasharray = LONGUEUR + ' ' + LONGUEUR;
-    chemin.style.strokeDashoffset = String(LONGUEUR);
+    function etatFinal() {
+      traceDanger.style.strokeDasharray = LONG_DANGER.toFixed(2) + ' 0';
+      traceDanger.style.opacity = '1';
+      traceLocal.style.strokeDasharray = LONG_LOCAL.toFixed(2) + ' 0';
+    }
 
     if (reduceMotion) {
-      chemin.style.strokeDashoffset = '0';
-      if (hud) hud.textContent = '100 %';
-      return;
+      etatFinal();
+    } else {
+      // Boucle légère : elle lit la variable publiée par l'engine et ne fait
+      // rien d'autre. Pas d'écouteur scroll, pas d'IntersectionObserver.
+      var animationId = null;
+      function cadre() {
+        animationId = requestAnimationFrame(cadre);
+        var brut = parseFloat(actePlan.style.getPropertyValue('--sc-p'));
+        if (!isNaN(brut)) peindre(brut);
+      }
+      cadre();
+      // Test : permet à la vérification de forcer un rendu hors rAF.
+      window.__rvlTrace = function (p) { peindre(p); return true; };
+      window.__rvlTraceReset = function () { cancelAnimationFrame(animationId); animationId = requestAnimationFrame(cadre); };
     }
+  }
 
-    var scene = document.getElementById('scene-map') || chemin.parentElement;
-    var ticking = false;
+  /* ---------- 2. Folio éditorial ---------- */
+  var folio = document.getElementById('rv-folio');
+  var folioNum = document.getElementById('rv-folio-num');
+  var folioNom = document.getElementById('rv-folio-nom');
+  var chapitres = Array.prototype.slice.call(document.querySelectorAll('[data-folio]'))
+    .map(function (el) {
+      return { el: el, num: el.getAttribute('data-folio'), nom: el.getAttribute('data-rue') };
+    });
+
+  if (folio && folioNum && folioNom && chapitres.length) {
+    var enCours = null;
+    var demande = false;
 
     function maj() {
-      ticking = false;
-      var r = scene.getBoundingClientRect();
-      var vh = window.innerHeight || document.documentElement.clientHeight;
-      // Le tracé vit entre l'entrée basse et le milieu de l'écran
-      var debut = vh * 0.85;
-      var fin = vh * 0.30;
-      var p = (debut - r.top) / (debut - fin);
-      p = Math.max(0, Math.min(1, p));
-      chemin.style.strokeDashoffset = String(LONGUEUR * (1 - p));
-      if (hud) hud.textContent = Math.round(p * 100) + ' %';
+      demande = false;
+      var y = window.scrollY + window.innerHeight * 0.45;
+      var courant = null;
+      for (var i = 0; i < chapitres.length; i++) {
+        if (chapitres[i].el.offsetTop <= y) courant = chapitres[i];
+        else break;
+      }
+      if (courant && courant !== enCours) {
+        enCours = courant;
+        folioNum.textContent = 'Rue ' + courant.num;
+        folioNom.textContent = courant.nom;
+        folio.style.opacity = '1';
+      } else if (!courant && enCours) {
+        enCours = null;
+        folio.style.opacity = '0';
+      }
     }
 
-    function onScroll() {
-      if (!ticking) { ticking = true; requestAnimationFrame(maj); }
+    function surScroll() {
+      if (!demande) { demande = true; requestAnimationFrame(maj); }
     }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('scroll', surScroll, { passive: true });
+    window.addEventListener('resize', surScroll, { passive: true });
     maj();
   }
 
-  /* ---------- Nav : état actif + fond ---------- */
-  function initNav() {
-    var nav = document.querySelector('.nav');
-    if (!nav) return;
-    var onScroll = function () {
-      nav.style.boxShadow = window.scrollY > 8 ? '0 4px 18px rgba(38,49,30,.08)' : 'none';
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
-
-  /* ---------- Lenis smooth scroll (premium) — optionnel si CDN dispo ---------- */
-  function initLenis() {
-    if (reduceMotion || typeof Lenis === 'undefined' || window.__lenisOk) return;
-    window.__lenisOk = true;
-    var lenis = new Lenis({ lerp: 0.09, smoothWheel: true, wheelMultiplier: 0.95 });
-    function raf(time) { lenis.raf(time * 1000); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
-    // Ancres douces
-    document.querySelectorAll('a[href^="#"]').forEach(function (lien) {
-      lien.addEventListener('click', function (e) {
-        var cible = document.querySelector(lien.getAttribute('href'));
+  /* ---------- 3. Boutons de prix → bulletin ---------- */
+  var select = document.getElementById('f-offre');
+  var boutonsOffre = document.querySelectorAll('.rv-btn-offre');
+  if (select && boutonsOffre.length) {
+    Array.prototype.forEach.call(boutonsOffre, function (btn) {
+      btn.addEventListener('click', function (e) {
+        var valeur = btn.getAttribute('data-offre');
+        if (!valeur) return;
+        select.value = valeur;
+        var cible = document.getElementById('commander');
         if (!cible) return;
         e.preventDefault();
-        lenis.scrollTo(cible, { offset: -60, duration: 1.2 });
+        if (reduceMotion) { cible.scrollIntoView({ block: 'start' }); }
+        else { cible.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
       });
     });
   }
-
-  initLenis();
-  initReveals();
-  initTrace();
-  initNav();
 })();
